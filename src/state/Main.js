@@ -4,55 +4,62 @@ import classes from "./Main.module.css";
 import Timer from "../noState/Timer";
 import StartButton from "../noState/StartButton";
 
-function secondsToHms(d) {
-  d = Number(d);
-  var h = Math.floor(d / 3600);
-  var m = Math.floor((d % 3600) / 60);
-  var s = Math.floor((d % 3600) % 60);
-
-  var hDisplay = h > 0 ? h + (h === 1 ? " hour, " : " hours, ") : "";
-  var mDisplay = m > 0 ? m + (m === 1 ? " minute, " : " minutes, ") : "";
-  var sDisplay = s > 0 ? s + (s === 1 ? " second" : " seconds") : "";
-  return hDisplay + mDisplay + sDisplay;
-}
-
+const TIME = 60;
+const MESSAGE = "Time to take a break!";
 function Main(props) {
-  const [timeLeft, setTimeLeft] = useState(10);
-  const [displayTime, setDisplayTime] = useState(secondsToHms(timeLeft));
-  //button
+  const [timeLeft, setTimeLeft] = useState(TIME);
   const [counting, setCounting] = useState(false);
+  const [settings, setSettings] = useState(false);
+  const [streak, setStreak] = useState(0);
 
-  // timer
+  // timer hook
   useEffect(() => {
-    if (!counting) {
-      return;
-    }
-    setTimeout(() => {
-      //add logic for ending
-      if (counting) {
-        setTimeLeft(timeLeft - 1);
-        setDisplayTime(secondsToHms(timeLeft - 1));
-        if (timeLeft === 0) {
-          setCounting(false);
-          setTimeLeft(900);
-          alert("Time is up!");
-        }
+    if (counting) {
+      if (settings) {
+        setSettings(false);
       }
-    }, 1000);
-  }, [timeLeft, counting, displayTime]);
+      setTimeout(() => {
+        //add logic for ending
+        if (timeLeft === 0) {
+          //TODO: Smart logic for break/work following
+          //TODO: Counting the streak of work sessions
+          setCounting(false);
+          setStreak(streak + 1);
+          setTimeLeft(TIME);
+          alert(MESSAGE);
+        } else {
+          setTimeLeft(timeLeft - 1);
+        }
+      }, 1000);
+    }
+  }, [timeLeft, counting, settings, streak]);
 
-  const clickHandler = () => {
-    setCounting(!counting);
-  };
   //counter
   //menu
 
   return (
+    // TODO: Add nice looking styles
     <React.Fragment>
-      <Timer className={classes.Time} left={timeLeft} />
-      {/* <StartButton click={setStartBtn(!startBtn)} /> */}
-      <button onClick={clickHandler}>Pause, resume</button>
-      <p>{displayTime}</p>
+      <Timer
+        className={classes.Time}
+        click={() => setSettings(!settings)}
+        left={timeLeft}
+      />
+      <StartButton click={() => setCounting(!counting)} counting={counting} />
+      <br />
+      {/* TODO: Costum input element */}
+      {settings ? (
+        <input
+          type="number"
+          min="1"
+          placeholder="Minutes"
+          value={timeLeft}
+          onChange={(e) => setTimeLeft(e.target.value)}
+        />
+      ) : null}
+      <p>
+        Your current streak is: {streak} <br /> Nice job, keep going!
+      </p>
     </React.Fragment>
   );
 }
