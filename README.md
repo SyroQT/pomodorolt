@@ -11,7 +11,7 @@ Pomodoro timers allows to plan your work/break sessions
 _Not implemented_
 
 - Plan for how long you want to study/work
-- Plan how long your breaks will be
-- Every 4-th cycle you'll get some surprise
+- _Plan how long your breaks will be_
+- _Every 4-th cycle you'll get some surprise_
 - Keeps track of your current streak
-- Keeps track of your best streak
+- _Keeps track of your best streak_
