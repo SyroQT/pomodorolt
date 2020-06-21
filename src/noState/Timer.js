@@ -1,5 +1,10 @@
 import React from "react";
 
+import classes from "./Timer.module.css";
+
+import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
+import "react-circular-progressbar/dist/styles.css";
+
 function secondsToHms(d) {
   d = Number(d);
   var h = Math.floor(d / 3600);
@@ -12,8 +17,23 @@ function secondsToHms(d) {
   return hDisplay + mDisplay + sDisplay;
 }
 
-const Timer = ({ left, click }) => {
+const Timer = ({ left, click, total }) => {
   //to do format time
-  return <p onClick={click}>Time left: {secondsToHms(left)}</p>;
+  return (
+    <div className={classes.Timer} onClick={click}>
+      <CircularProgressbar
+        styles={buildStyles({
+          // Colors
+          pathColor: `#8C2F39`,
+          textColor: "#461220",
+          trailColor: "#B23A48",
+        })}
+        value={left}
+        maxValue={total}
+        text={`${left}`}
+      />
+      {secondsToHms(left)}
+    </div>
+  );
 };
 export default Timer;

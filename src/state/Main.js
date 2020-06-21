@@ -3,10 +3,12 @@ import classes from "./Main.module.css";
 
 import Timer from "../noState/Timer";
 import StartButton from "../noState/StartButton";
+import Input from "../noState/Input";
 
 const TIME = 60;
 const MESSAGE = "Time to take a break!";
 function Main(props) {
+  const [totalTime, setTotalTime] = useState(TIME);
   const [timeLeft, setTimeLeft] = useState(TIME);
   const [counting, setCounting] = useState(false);
   const [settings, setSettings] = useState(false);
@@ -25,7 +27,7 @@ function Main(props) {
           //TODO: Counting the streak of work sessions
           setCounting(false);
           setStreak(streak + 1);
-          setTimeLeft(TIME);
+          setTimeLeft(totalTime);
           alert(MESSAGE);
         } else {
           setTimeLeft(timeLeft - 1);
@@ -44,19 +46,19 @@ function Main(props) {
         className={classes.Time}
         click={() => setSettings(!settings)}
         left={timeLeft}
+        total={totalTime}
       />
       <StartButton click={() => setCounting(!counting)} counting={counting} />
       <br />
-      {/* TODO: Costum input element */}
-      {settings ? (
-        <input
-          type="number"
-          min="1"
-          placeholder="Minutes"
-          value={timeLeft}
-          onChange={(e) => setTimeLeft(e.target.value)}
-        />
-      ) : null}
+
+      <Input
+        show={settings}
+        time={timeLeft}
+        change={(e) => {
+          setTimeLeft(e.target.value);
+          setTotalTime(e.target.value);
+        }}
+      />
       <p>
         Your current streak is: {streak} <br /> Nice job, keep going!
       </p>

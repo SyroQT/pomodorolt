@@ -1,3 +1,39 @@
+:root {
+  --backcl: #fed0bb;
+  --redcl: #b23a48;
+  --dredcl: #8c2f39;
+  --blackcl: #461220;
+}
+
+html {
+  margin: 0;
+  box-sizing: border-box;
+  color: var(--blackcl);
+  font-size: 62.5%;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+/* Base button styles */
+button {
+  background-color: var(--redcl);
+  border: none;
+  color: var(--backcl);
+  padding: 1rem;
+  border-radius: 13px;
+  outline: none;
+}
+
+button:hover {
+  transform: scale(1.1);
+  background-color: var(--dredcl);
+}
+body {
+  background-color: var(--backcl);
+}
+
 .App {
   text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
 }
