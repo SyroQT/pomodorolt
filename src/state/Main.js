@@ -5,14 +5,17 @@ import Timer from "../noState/Timer";
 import StartButton from "../noState/StartButton";
 import Input from "../noState/Input";
 
-const TIME = 60;
-const MESSAGE = "Time to take a break!";
+const TIME = 20;
+const MESSAGE_BREAK = "Time to go back to work";
+const MESSAGE_WORK = "Time to take a break!";
 function Main(props) {
-  const [totalTime, setTotalTime] = useState(TIME);
+  const [workTime, setWorkTime] = useState(TIME);
   const [timeLeft, setTimeLeft] = useState(TIME);
   const [counting, setCounting] = useState(false);
   const [settings, setSettings] = useState(false);
   const [streak, setStreak] = useState(0);
+  const [isBreak, setIsBreak] = useState(false);
+  const [breakTime, setBreakTime] = useState(TIME);
 
   // timer hook
   useEffect(() => {
@@ -26,15 +29,25 @@ function Main(props) {
           //TODO: Smart logic for break/work following
           //TODO: Counting the streak of work sessions
           setCounting(false);
-          setStreak(streak + 1);
-          setTimeLeft(totalTime);
-          alert(MESSAGE);
+          // Wheather it is a break or a work session
+          if (isBreak) {
+            // If break just endded - start a work timer
+            setIsBreak(false);
+            setTimeLeft(workTime);
+            alert(MESSAGE_BREAK);
+          } else {
+            // Else start a break timer
+            setIsBreak(true);
+            setTimeLeft(breakTime);
+            setStreak(streak + 1);
+            alert(MESSAGE_WORK);
+          }
         } else {
           setTimeLeft(timeLeft - 1);
         }
       }, 1000);
     }
-  }, [timeLeft, counting, settings, streak]);
+  }, [timeLeft, counting, settings, streak, workTime, isBreak, breakTime]);
 
   //counter
   //menu
@@ -46,7 +59,7 @@ function Main(props) {
         className={classes.Time}
         click={() => setSettings(!settings)}
         left={timeLeft}
-        total={totalTime}
+        total={isBreak ? breakTime : workTime} //TODO: add logic
       />
       <StartButton click={() => setCounting(!counting)} counting={counting} />
       <br />
@@ -55,12 +68,15 @@ function Main(props) {
         show={settings}
         time={timeLeft}
         change={(e) => {
-          setTimeLeft(e.target.value);
-          setTotalTime(e.target.value);
+          //TODO: fix
+          const time = e.target.value;
+          setTimeLeft(time);
+          isBreak ? setBreakTime(time) : setWorkTime(time);
         }}
       />
       <p>
-        Your current streak is: {streak} <br /> Nice job, keep going!
+        Your current streak is: {streak} <br /> Nice job, keep going! <br />
+        {isBreak ? "Break" : "Work"}
       </p>
     </React.Fragment>
   );
