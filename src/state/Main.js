@@ -4,18 +4,28 @@ import classes from "./Main.module.css";
 import Timer from "../noState/Timer";
 import StartButton from "../noState/StartButton";
 import Input from "../noState/Input";
+import Modal from "../noState/ui/Modal";
 
-const TIME = 20;
+const TIME = [0, 30, 0];
 const MESSAGE_BREAK = "Time to go back to work";
 const MESSAGE_WORK = "Time to take a break!";
+
+const convertTime = (time) => {
+  let total = time[2];
+  total += time[1] * 60;
+  total += time[0] * 3600;
+  return total;
+};
+
 function Main(props) {
-  const [workTime, setWorkTime] = useState(TIME);
-  const [timeLeft, setTimeLeft] = useState(TIME);
+  const [workTime, setWorkTime] = useState(convertTime(TIME));
+  const [timeLeft, setTimeLeft] = useState(convertTime(TIME));
   const [counting, setCounting] = useState(false);
   const [settings, setSettings] = useState(false);
   const [streak, setStreak] = useState(0);
   const [isBreak, setIsBreak] = useState(false);
-  const [breakTime, setBreakTime] = useState(TIME);
+  const [breakTime, setBreakTime] = useState(convertTime(TIME));
+  const [tripleTime, setTripleTime] = useState([0, 30, 0]);
 
   // timer hook
   useEffect(() => {
@@ -49,8 +59,44 @@ function Main(props) {
     }
   }, [timeLeft, counting, settings, streak, workTime, isBreak, breakTime]);
 
+  const inputHandler = (e) => {
+    //TODO: fix
+    const newTime = [...tripleTime];
+
+    switch (e.target.id) {
+      case "hours":
+        newTime[0] = e.target.value;
+        break;
+      case "minutes":
+        newTime[1] = e.target.value;
+        break;
+      case "seconds":
+        newTime[2] = e.target.value;
+        console.log(newTime);
+
+        break;
+      default:
+        console.log("Error");
+    }
+    //input time
+    setTripleTime(newTime);
+    console.log(convertTime(tripleTime));
+
+    //working time
+    setTimeLeft(convertTime(newTime));
+    isBreak
+      ? setBreakTime(convertTime(newTime))
+      : setWorkTime(convertTime(newTime));
+    // const time = newTime;
+    // setTimeLeft(time);
+    // isBreak ? setBreakTime(time) : setWorkTime(time);
+  };
   //counter
   //menu
+  let input = null;
+  if (!counting) {
+    input = <Input show={settings} time={tripleTime} change={inputHandler} />;
+  }
 
   return (
     // TODO: Add nice looking styles
@@ -63,17 +109,10 @@ function Main(props) {
       />
       <StartButton click={() => setCounting(!counting)} counting={counting} />
       <br />
+      <Modal show={settings} modalClosed={() => setSettings(false)}>
+        {input}
+      </Modal>
 
-      <Input
-        show={settings}
-        time={timeLeft}
-        change={(e) => {
-          //TODO: fix
-          const time = e.target.value;
-          setTimeLeft(time);
-          isBreak ? setBreakTime(time) : setWorkTime(time);
-        }}
-      />
       <p>
         Your current streak is: {streak} <br /> Nice job, keep going! <br />
         {isBreak ? "Break" : "Work"}
