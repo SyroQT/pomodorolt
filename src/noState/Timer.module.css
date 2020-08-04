@@ -4,3 +4,8 @@
   cursor: pointer;
   width: 50%;
 }
+@media only screen and (min-width: 900px) {
+  .Timer {
+    width: 30%;
+  }
+}

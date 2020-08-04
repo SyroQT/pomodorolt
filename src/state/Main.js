@@ -6,38 +6,50 @@ import StartButton from "../noState/StartButton";
 import Input from "../noState/Input";
 import Modal from "../noState/ui/Modal";
 
-const TIME = [0, 30, 0];
+const TIME = 180;
 const MESSAGE_BREAK = "Time to go back to work";
 const MESSAGE_WORK = "Time to take a break!";
+/* Helper functions */
+const secToTriple = (totalSeconds) => {
+  const hours = Math.floor(totalSeconds / 3600);
+  totalSeconds %= 3600;
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+  return [hours, minutes, seconds];
+};
 
-const convertTime = (time) => {
-  let total = time[2];
-  total += time[1] * 60;
-  total += time[0] * 3600;
-  return total;
+const tripleToSec = (time) => {
+  return time[0] * 3600 + time[1] * 60 + time[2];
 };
 
 function Main(props) {
-  const [workTime, setWorkTime] = useState(convertTime(TIME));
-  const [timeLeft, setTimeLeft] = useState(convertTime(TIME));
-  const [counting, setCounting] = useState(false);
-  const [settings, setSettings] = useState(false);
+  /* 
+  laikas darbui laikas pertraukai
+  arPertrauka arSkaiciuojam
+  laikasSekundemis
+  */
+  // Main variables for work and break
+  const [workTime, setWorkTime] = useState(TIME);
+  const [breakTime, setBreakTime] = useState(TIME);
   const [streak, setStreak] = useState(0);
+  // Bools
+  const [settings, setSettings] = useState(false);
+  const [counting, setCounting] = useState(false);
   const [isBreak, setIsBreak] = useState(false);
-  const [breakTime, setBreakTime] = useState(convertTime(TIME));
-  const [tripleTime, setTripleTime] = useState([0, 30, 0]);
+
+  const [timeLeft, setTimeLeft] = useState(TIME);
 
   // timer hook
   useEffect(() => {
     if (counting) {
       if (settings) {
+        // we cant open setting if counting
         setSettings(false);
       }
+      // set 1 sec timeout
       setTimeout(() => {
-        //add logic for ending
+        // we end the counting
         if (timeLeft === 0) {
-          //TODO: Smart logic for break/work following
-          //TODO: Counting the streak of work sessions
           setCounting(false);
           // Wheather it is a break or a work session
           if (isBreak) {
@@ -53,49 +65,59 @@ function Main(props) {
             alert(MESSAGE_WORK);
           }
         } else {
+          // we count down 1 sec at a time
           setTimeLeft(timeLeft - 1);
         }
       }, 1000);
     }
   }, [timeLeft, counting, settings, streak, workTime, isBreak, breakTime]);
 
+  // Handlina Inputa is jo componento
   const inputHandler = (e) => {
-    //TODO: fix
-    const newTime = [...tripleTime];
-
+    const timeWork = secToTriple(workTime);
+    const timeBreak = secToTriple(breakTime);
+    // Atrenka kuri fielda pakeitem
     switch (e.target.id) {
-      case "hours":
-        newTime[0] = e.target.value;
+      case "workH":
+        timeWork[0] = Number(e.target.value);
         break;
-      case "minutes":
-        newTime[1] = e.target.value;
+      case "workM":
+        timeWork[1] = Number(e.target.value);
         break;
-      case "seconds":
-        newTime[2] = e.target.value;
-        console.log(newTime);
-
+      case "workS":
+        timeWork[2] = Number(e.target.value);
+        break;
+      case "breakH":
+        timeBreak[0] = Number(e.target.value);
+        break;
+      case "breakM":
+        timeBreak[1] = Number(e.target.value);
+        break;
+      case "breakS":
+        timeBreak[2] = Number(e.target.value);
         break;
       default:
         console.log("Error");
     }
-    //input time
-    setTripleTime(newTime);
-    console.log(convertTime(tripleTime));
+    // Atnaujinam state
+    setWorkTime(tripleToSec(timeWork));
+    setBreakTime(tripleToSec(timeBreak));
 
-    //working time
-    setTimeLeft(convertTime(newTime));
     isBreak
-      ? setBreakTime(convertTime(newTime))
-      : setWorkTime(convertTime(newTime));
-    // const time = newTime;
-    // setTimeLeft(time);
-    // isBreak ? setBreakTime(time) : setWorkTime(time);
+      ? setTimeLeft(tripleToSec(timeBreak))
+      : setTimeLeft(tripleToSec(timeWork));
   };
   //counter
   //menu
   let input = null;
   if (!counting) {
-    input = <Input show={settings} time={tripleTime} change={inputHandler} />;
+    input = (
+      <Input
+        workTime={workTime}
+        breakTime={breakTime}
+        onChange={inputHandler}
+      />
+    );
   }
 
   return (
