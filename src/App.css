@@ -17,9 +17,12 @@ button {
   background-color: var(--redcl);
   border: none;
   color: var(--backcl);
-  padding: 1rem;
+  padding: 2rem;
   border-radius: 13px;
   outline: none;
+  font-weight: bold;
+  font-size: 2rem;
+  letter-spacing: 0.15em;
 }
 
 button:hover {

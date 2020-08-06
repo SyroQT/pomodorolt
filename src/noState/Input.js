@@ -1,4 +1,5 @@
 import React from "react";
+import styles from "./Input.module.css";
 
 const secToTriple = (totalSeconds) => {
   const hours = Math.floor(totalSeconds / 3600);
@@ -14,66 +15,66 @@ const Input = ({ workTime, breakTime, onChange }) => {
   const [breakH, breakM, breakS] = secToTriple(breakTime);
 
   input = (
-    <React.Fragment>
-      <div>
+    <form className={styles.Form}>
+      <div id="work-numbers">
         <h1>Work time</h1>
         <input
           type="number"
-          min="0"
           placeholder="Hours"
-          value={workH}
+          value={workH === 0 ? "" : workH}
+          min="0"
           id="workH"
           onChange={onChange}
         />
         <input
           type="number"
-          min="0"
           max="60"
+          min="0"
           id="workM"
           placeholder="Minutes"
-          value={workM}
+          value={workM === 0 ? "" : workM}
           onChange={onChange}
         />
         <input
           type="number"
-          min="0"
           max="60"
+          min="0"
           id="workS"
           placeholder="Seconds"
-          value={workS}
+          value={workS === 0 ? "" : workS}
           onChange={onChange}
         />
       </div>
-      <div>
+      <div id="break-numbers">
         <h1>Break time</h1>
         <input
           type="number"
-          min="0"
           placeholder="Hours"
-          value={breakH}
+          value={breakH === 0 ? "" : breakH}
           id="breakH"
+          min="0"
           onChange={onChange}
         />
         <input
           type="number"
-          min="0"
           max="60"
+          min="0"
           id="breakM"
           placeholder="Minutes"
-          value={breakM}
+          value={breakM === 0 ? "" : breakM}
           onChange={onChange}
         />
         <input
           type="number"
-          min="0"
           max="60"
+          min="0"
           id="breakS"
           placeholder="Seconds"
-          value={breakS}
+          value={breakS === 0 ? "" : breakS}
           onChange={onChange}
         />
       </div>
-    </React.Fragment>
+    </form>
   );
 
   return input;

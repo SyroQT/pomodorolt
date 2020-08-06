@@ -5,6 +5,7 @@ import Timer from "../noState/Timer";
 import StartButton from "../noState/StartButton";
 import Input from "../noState/Input";
 import Modal from "../noState/ui/Modal";
+import Info from "../noState/Info";
 
 const TIME = 180;
 const MESSAGE_BREAK = "Time to go back to work";
@@ -125,10 +126,11 @@ function Main(props) {
     <React.Fragment>
       <Timer
         className={classes.Time}
-        click={() => setSettings(!settings)}
+        click={() => (counting ? null : setSettings(!settings))}
         left={timeLeft}
-        total={isBreak ? breakTime : workTime} //TODO: add logic
+        total={isBreak ? breakTime : workTime}
       />
+      <Info isBreak={isBreak} />
       <StartButton click={() => setCounting(!counting)} counting={counting} />
       <br />
       <Modal show={settings} modalClosed={() => setSettings(false)}>

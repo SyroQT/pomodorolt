@@ -1,0 +1,8 @@
+.Form > div > input {
+  height: 3rem;
+  width: 80%;
+}
+
+.Form > div > input:not(:last-child) {
+  margin-bottom: 1rem;
+}

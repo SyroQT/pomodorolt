@@ -6,7 +6,7 @@ const StartButton = ({ click, counting }) => {
   //to do format time
   return (
     <button className={classes.Button} onClick={click}>
-      Click to {counting ? "stop" : "start"}
+      {counting ? "Pause" : "Start"}
     </button>
   );
 };
