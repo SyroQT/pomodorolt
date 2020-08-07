@@ -4,8 +4,11 @@
   cursor: pointer;
   width: 70%;
 }
-@media only screen and (min-width: 900px) {
+@media only screen and (min-width: 800px) {
+  html {
+    font-size: 60%;
+  }
   .Timer {
-    width: 40%;
+    width: 35%;
   }
 }

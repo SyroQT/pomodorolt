@@ -7,9 +7,11 @@ import Input from "../noState/Input";
 import Modal from "../noState/ui/Modal";
 import Info from "../noState/Info";
 
-const TIME = 180;
-const MESSAGE_BREAK = "Time to go back to work";
-const MESSAGE_WORK = "Time to take a break!";
+import Sound from "react-sound";
+import sfx from "../media/sound.wav";
+
+const TIMEWORK = 1800;
+const TIMEBREAK = 300;
 /* Helper functions */
 const secToTriple = (totalSeconds) => {
   const hours = Math.floor(totalSeconds / 3600);
@@ -30,15 +32,16 @@ function Main(props) {
   laikasSekundemis
   */
   // Main variables for work and break
-  const [workTime, setWorkTime] = useState(TIME);
-  const [breakTime, setBreakTime] = useState(TIME);
+  const [workTime, setWorkTime] = useState(TIMEWORK);
+  const [breakTime, setBreakTime] = useState(TIMEBREAK);
   const [streak, setStreak] = useState(0);
   // Bools
   const [settings, setSettings] = useState(false);
   const [counting, setCounting] = useState(false);
   const [isBreak, setIsBreak] = useState(false);
 
-  const [timeLeft, setTimeLeft] = useState(TIME);
+  const [timeLeft, setTimeLeft] = useState(TIMEWORK);
+  const [playSound, setPlaySound] = useState(null);
 
   // timer hook
   useEffect(() => {
@@ -51,19 +54,26 @@ function Main(props) {
       setTimeout(() => {
         // we end the counting
         if (timeLeft === 0) {
+          setPlaySound(
+            <Sound
+              url={sfx}
+              playStatus={Sound.status.PLAYING}
+              onFinishedPlaying={setPlaySound(null)}
+            />
+          );
           setCounting(false);
           // Wheather it is a break or a work session
           if (isBreak) {
             // If break just endded - start a work timer
             setIsBreak(false);
             setTimeLeft(workTime);
-            alert(MESSAGE_BREAK);
+            // alert(MESSAGE_BREAK);
           } else {
             // Else start a break timer
             setIsBreak(true);
             setTimeLeft(breakTime);
             setStreak(streak + 1);
-            alert(MESSAGE_WORK);
+            // alert(MESSAGE_WORK);
           }
         } else {
           // we count down 1 sec at a time
@@ -124,6 +134,15 @@ function Main(props) {
   return (
     // TODO: Add nice looking styles
     <React.Fragment>
+      {playSound}
+      {/* {timeLeft === 0 || playSound ? (
+        <Sound
+          url={sfx}
+          onLoad={setPlaySound(true)}
+          playStatus={Sound.status.PLAYING}
+          onFinishedPlaying={setPlaySound(false)}
+        />
+      ) : null} */}
       <Timer
         className={classes.Time}
         click={() => (counting ? null : setSettings(!settings))}
@@ -136,7 +155,6 @@ function Main(props) {
       <Modal show={settings} modalClosed={() => setSettings(false)}>
         {input}
       </Modal>
-
       <p>
         Your current streak is: {streak} <br /> Nice job, keep going! <br />
         {isBreak ? "Break" : "Work"}
